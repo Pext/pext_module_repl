@@ -23,6 +23,8 @@ from pext_helpers import Action, SelectionType
 
 class Module(ModuleBase):
     def init(self, settings, q):
+        self.output = None
+
         self.q = q
 
         self.q.put([Action.add_command, "eval"])
@@ -31,14 +33,19 @@ class Module(ModuleBase):
         pass
 
     def selection_made(self, selection):
-        if len(selection) == 1:
+        if len(selection) == 0:
+            self.q.put([Action.add_command, "eval"])
+            if self.output:
+                self.q.put([Action.add_entry, self.output])
+                self.output = None
+        elif len(selection) == 1:
             if selection[0]["type"] == SelectionType.command:
                 # Remove command from input string
                 _, input_string = selection[0]["value"].split(" ", 1)
 
                 self.q.put([Action.replace_entry_list, []])
                 try:
-                    self.q.put([Action.add_entry, eval(input_string, {})])
+                    self.output = eval(input_string, {})
                 except Exception as e:
                     self.q.put([Action.add_error, str(e)])
             
