@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# Copyright (c) 2016 Sylvia van Os <iamsylvie@openmailbox.org>
+# Copyright (c) 2016 - 2017 Sylvia van Os <sylvia@hackerchick.me>
 #
 # Pext REPL module is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,7 +41,14 @@ class Module(ModuleBase):
         elif len(selection) == 1:
             if selection[0]["type"] == SelectionType.command:
                 # Remove command from input string
-                _, input_string = selection[0]["value"].split(" ", 1)
+                input_string = selection[0]["value"].split(" ", 1)
+
+                # Don't do anything if there is nothing to do
+                if len(input_string) < 2:
+                    self.q.put([Action.set_selection, []])
+                    return
+
+                input_string = input_string[1:]
 
                 self.q.put([Action.replace_entry_list, []])
                 try:
