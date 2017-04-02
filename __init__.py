@@ -48,7 +48,7 @@ class Module(ModuleBase):
                     self.q.put([Action.set_selection, []])
                     return
 
-                input_string = input_string[1:]
+                input_string = " ".join(input_string[1:])
 
                 self.q.put([Action.replace_entry_list, []])
                 try:
